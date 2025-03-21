@@ -5,7 +5,7 @@ import ResultDisplay from './atoms/ResultDisplay';
 import './App.css';
 
 function App() {
-  const totalTime = 8; // 総時間10秒
+  const totalTime = 8; // 総時間8秒
   const [started, setStarted] = useState(false);
   const [tapCount, setTapCount] = useState(0);
   const [showResult, setShowResult] = useState(false);
@@ -22,13 +22,13 @@ function App() {
   }, []);
 
   const startTimer = () => {
-    // 10秒後に結果表示へ切り替え
+    // 総時間経過後に結果表示へ切替
     timerRef.current = setTimeout(() => {
       setShowResult(true);
       clearInterval(progressIntervalRef.current);
     }, totalTime * 1000);
 
-    // 0.1秒ごとに残り時間を更新（10秒で0になる）
+    // 0.1秒ごとに残り時間を更新
     progressIntervalRef.current = setInterval(() => {
       setTimeLeft(prev => {
         const newTime = prev - 0.1;
@@ -41,7 +41,7 @@ function App() {
     }, 100);
   };
 
-  // スタートボタン押下時にタイマーとプログレスバーを開始
+  // スタートボタン押下時の処理
   const handleStart = () => {
     setStarted(true);
     setTapCount(0);
@@ -58,7 +58,7 @@ function App() {
     startTimer();
   };
 
-  // タップで各Octagonの色を変更し、10回で即結果表示
+  // 「TAP」ボタン押下時の処理（10回タップで結果表示）
   const handleTap = () => {
     if (!started || showResult) return;
     setTapCount(prev => {
@@ -80,13 +80,12 @@ function App() {
 
   return (
     <div className="main-app">
-      {/* お洒落なスタートボタン */}
+      {/* スタートボタン */}
       {!started && <button className="start-button" onClick={handleStart}>START</button>}
+      
+      {/* Octagonは見た目上の表示のみ（タップ判定は削除） */}
       {started && (
-        <div 
-          onClick={handleTap} 
-          style={{ display: 'inline-block', cursor: showResult ? 'default' : 'pointer' }}
-        >
+        <div style={{ display: 'inline-block' }}>
           <Octagon size={300} colored={tapCount >= 1}>
             <Octagon size={270} colored={tapCount >= 2}>
               <Octagon size={240} colored={tapCount >= 3}>
@@ -108,11 +107,16 @@ function App() {
           </Octagon>
         </div>
       )}
-      {/* タイマー中かつ結果未表示の場合はプログレスバーを表示 */}
+      
+      {/* タイマー中かつ結果未表示の場合、プログレスバーと「TAP」ボタンを表示 */}
       {started && !showResult && (
-        <TimerProgressBar timeLeft={timeLeft} totalTime={totalTime} />
+        <>
+          <TimerProgressBar timeLeft={timeLeft} totalTime={totalTime} />
+          <button className="start-button" onClick={handleTap}>TAP!!</button>
+        </>
       )}
-      {/* 結果表示（アニメーション付き） */}
+      
+      {/* 結果表示 */}
       {showResult && <ResultDisplay tapCount={tapCount} />}
     </div>
   );
