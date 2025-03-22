@@ -3,6 +3,7 @@ import Octagon from './Octagon';
 import TimerProgressBar from './TimerProgressBar';
 import ResultDisplay from './atoms/ResultDisplay';
 import './App.css';
+import QuizApp from './organisms/QuizApp';
 
 function App() {
   const totalTime = 8; // 総時間8秒
@@ -57,6 +58,10 @@ function App() {
     }
     startTimer();
   };
+  const reset = ()=>{
+    setStarted(false);
+    setShowResult(false);
+  }
 
   // 「TAP」ボタン押下時の処理（10回タップで結果表示）
   const handleTap = () => {
@@ -81,7 +86,13 @@ function App() {
   return (
     <div className="main-app">
       {/* スタートボタン */}
-      {!started && <button className="start-button" onClick={handleStart}>START</button>}
+      {!started && (
+        <>
+        <QuizApp>
+        </QuizApp>
+        <button className="atom-button" onClick={handleStart}>判定</button>
+        </>
+        )}
       
       {/* Octagonは見た目上の表示のみ（タップ判定は削除） */}
       {started && (
@@ -117,7 +128,11 @@ function App() {
       )}
       
       {/* 結果表示 */}
-      {showResult && <ResultDisplay tapCount={tapCount} />}
+      {showResult && (<>
+        <ResultDisplay tapCount={tapCount} />
+        <button className="atom-next-button" onClick={reset}>Next</button>
+      </>
+      )}
     </div>
   );
 }
